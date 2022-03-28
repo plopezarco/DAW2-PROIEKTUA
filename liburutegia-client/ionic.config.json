@@ -1,7 +1,0 @@
-{
-  "name": "liburutegia-client",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular"
-}
