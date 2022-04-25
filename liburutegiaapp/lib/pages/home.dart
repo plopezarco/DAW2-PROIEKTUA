@@ -1,7 +1,6 @@
 import 'package:liburutegiaapp/pages/book_page.dart';
 import 'package:liburutegiaapp/theme/colors.dart';
 import 'package:liburutegiaapp/widgets/bottombar_item.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
@@ -27,7 +26,7 @@ class _HomeState extends State<Home> {
     return Container(
       height: 65,
       width: double.infinity,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(100),
         ),
@@ -70,14 +69,14 @@ class _HomeState extends State<Home> {
 
   Widget getPage() {
     return Container(
-      decoration: BoxDecoration(color: bottomBarColor),
+      decoration: const BoxDecoration(color: bottomBarColor),
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             color: appBgColor,
             borderRadius: BorderRadius.only(bottomRight: Radius.circular(80))),
         child: IndexedStack(
           index: activeTab,
-          children: <Widget>[
+          children: const <Widget>[
             HomePage(),
             BookPage(),
             Center(

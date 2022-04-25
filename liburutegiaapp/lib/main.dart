@@ -1,21 +1,22 @@
+import 'package:liburutegiaapp/pages/intro_page.dart';
+import 'package:liburutegiaapp/pages/login_page.dart';
 import 'package:liburutegiaapp/theme/colors.dart';
 import 'package:flutter/material.dart';
 
-import 'pages/home.dart';
-
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(brightness: Brightness.light, primaryColor: primary),
-      home: Home(),
+      title: 'Liburutegia',
+      theme: ThemeData(brightness: Brightness.light, primaryColor: themeMain),
+      home: const LoginPage(),
     );
   }
 }

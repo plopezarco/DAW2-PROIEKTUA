@@ -38,6 +38,11 @@ dependencies:
   badges: ^2.0.2
   flutter_svg: ^1.0.3
   multiavatar: ^0.1.5
+  flutter_image: ^4.1.0
+  intro_slider: ^3.0.4
+  flutter_login: ^3.2.0
+  multi_select_flutter: ^4.1.2
+  easy_image_viewer: ^1.0.4
 
 dev_dependencies:
   flutter_test:

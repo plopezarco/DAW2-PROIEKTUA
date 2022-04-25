@@ -1,12 +1,15 @@
 import 'package:badges/badges.dart';
+import 'package:liburutegiaapp/helpers/book_search.dart';
+import 'package:liburutegiaapp/helpers/writer_search.dart';
 import 'package:liburutegiaapp/models/idazlea.dart';
 import 'package:liburutegiaapp/models/liburua.dart';
 import 'package:liburutegiaapp/services/api_service.dart';
 import 'package:liburutegiaapp/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:liburutegiaapp/widgets/writer_item.dart';
-
-import '../widgets/book_item.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:liburutegiaapp/widgets/book_item.dart';
+import 'package:liburutegiaapp/helpers/globals.dart' as globals;
 
 class BookPage extends StatefulWidget {
   const BookPage({Key? key}) : super(key: key);
@@ -20,11 +23,19 @@ class _BookPageState extends State<BookPage> {
   List<Liburua> liburuak = <Liburua>[];
   List<Idazlea> idazleak = <Idazlea>[];
 
+  Future<List<Liburua>>? ftrLiburu;
+  Future<List<Idazlea>>? ftrIdazle;
+
+  List<Liburua> liburuFilter = <Liburua>[];
+  List<String> generoFilter = <String>[];
+
+  int tabIndex = 0;
+
   @override
   void initState() {
     super.initState();
-    getLiburuak();
-    getIdazleak();
+    ftrLiburu = api.getLiburuakIdazlearekin();
+    ftrIdazle = api.getIdazleakLiburuekin();
   }
 
   @override
@@ -47,22 +58,33 @@ class _BookPageState extends State<BookPage> {
               Expanded(
                   child: Container(
                       alignment: Alignment.centerLeft,
-                      child: const Icon(
-                        Icons.vertical_distribute_rounded,
-                        color: primary,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.filter_list,
+                          color: primary,
+                        ),
+                        onPressed: () {
+                          openFilter(context);
+                        },
                       ))),
-              const Icon(
-                Icons.search_rounded,
-                color: primary,
+              IconButton(
+                icon: const Icon(Icons.search_rounded, color: primary),
+                onPressed: () {
+                  showSearch(
+                      context: context,
+                      delegate: tabIndex == 0
+                          ? BookSearch(liburuak, refresh)
+                          : WriterSearch(idazleak));
+                },
               ),
               const SizedBox(
                 width: 15,
               ),
               Badge(
                 position: BadgePosition.topEnd(top: -10, end: -10),
-                badgeContent: const Text(
-                  '1',
-                  style: TextStyle(color: Colors.white),
+                badgeContent: Text(
+                  globals.cart.length.toString(),
+                  style: const TextStyle(color: Colors.white),
                 ),
                 child: const Icon(
                   Icons.shopping_bag_rounded,
@@ -90,10 +112,13 @@ class _BookPageState extends State<BookPage> {
                 ],
               ),
               child: TabBar(
-                indicatorColor: primary,
+                onTap: (index) {
+                  tabIndex = index;
+                },
+                indicatorColor: themeMain,
                 indicator: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: primary,
+                  color: themeMain,
                 ),
                 labelPadding: const EdgeInsets.only(top: 8, bottom: 8),
                 unselectedLabelColor: primary,
@@ -113,14 +138,35 @@ class _BookPageState extends State<BookPage> {
             Expanded(
               child: TabBarView(
                 children: [
-                  ListView(
-                      scrollDirection: Axis.vertical,
-                      padding: const EdgeInsets.only(left: 15, right: 15),
-                      children: getLiburuakList()),
-                  ListView(
-                      scrollDirection: Axis.vertical,
-                      padding: const EdgeInsets.only(left: 15, right: 15),
-                      children: getIdazleakList()),
+                  FutureBuilder<List<Liburua>>(
+                    future: ftrLiburu,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData && snapshot.data != null) {
+                        liburuak = snapshot.data!;
+                        if (liburuFilter.isEmpty) {
+                          liburuFilter.addAll(liburuak);
+                        }
+                        return getLiburuakList();
+                      } else if (snapshot.hasError) {
+                        return Text('${snapshot.error}',
+                            style: const TextStyle(color: Colors.black));
+                      }
+                      return const CircularProgressIndicator();
+                    },
+                  ),
+                  FutureBuilder<List<Idazlea>>(
+                    future: ftrIdazle,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData && snapshot.data != null) {
+                        idazleak = snapshot.data!;
+                        return getIdazleakList();
+                      } else if (snapshot.hasError) {
+                        return Text('${snapshot.error}',
+                            style: const TextStyle(color: Colors.black));
+                      }
+                      return const CircularProgressIndicator();
+                    },
+                  )
                 ],
               ),
             ),
@@ -131,26 +177,77 @@ class _BookPageState extends State<BookPage> {
   }
 
   getLiburuakList() {
-    return List.generate(
-        liburuak.length, (index) => BookItem(liburua: liburuak[index]));
+    return RefreshIndicator(
+        onRefresh: () async {
+          ftrLiburu = api.getLiburuakIdazlearekin();
+          setState(() {});
+        },
+        child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          padding: const EdgeInsets.only(left: 15, right: 15),
+          shrinkWrap: false,
+          itemCount: liburuFilter.length,
+          itemBuilder: (BuildContext context, int index) {
+            return BookItem(
+              liburua: liburuFilter[index],
+              notifyParent: refresh,
+            );
+          },
+        ));
   }
 
   getIdazleakList() {
-    return List.generate(
-        idazleak.length, (index) => WriterItem(idazlea: idazleak[index]));
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      padding: const EdgeInsets.only(left: 15, right: 15),
+      shrinkWrap: false,
+      itemCount: idazleak.length,
+      itemBuilder: (BuildContext context, int index) {
+        return WriterItem(idazlea: idazleak[index]);
+      },
+    );
   }
 
-  Future getLiburuak() async {
-    List<Liburua> book = await api.getBooks();
-    setState(() {
-      liburuak = book;
-    });
+  getGeneroak() {
+    List<String> generoak = [];
+    for (Liburua l in liburuak) {
+      !generoak.contains(l.generoa) ? generoak.add(l.generoa) : null;
+    }
+    return generoak;
   }
 
-  Future getIdazleak() async {
-    List<Idazlea> writers = await api.getIdazleak();
-    setState(() {
-      idazleak = writers;
-    });
+  openFilter(BuildContext context) async {
+    if (generoFilter.isEmpty) {
+      generoFilter = getGeneroak();
+    }
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (ctx) {
+        return MultiSelectBottomSheet(
+          minChildSize: 0.1,
+          initialChildSize: 0.1 + generoFilter.length * 0.1,
+          maxChildSize: 0.1 + generoFilter.length * 0.1,
+          cancelText: Text(
+            "ATZERA",
+            style: TextStyle(
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+          title: const Text("Aukeratu"),
+          items: generoFilter.map((g) => MultiSelectItem(g, g)).toList(),
+          initialValue: getGeneroak(),
+          onConfirm: (values) {
+            liburuFilter =
+                liburuak.where((e) => values.contains(e.generoa)).toList();
+            setState(() {});
+          },
+        );
+      },
+    );
+  }
+
+  refresh() {
+    setState(() {});
   }
 }

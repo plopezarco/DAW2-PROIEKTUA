@@ -1,4 +1,3 @@
-import 'package:liburutegiaapp/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:multiavatar/multiavatar.dart';
@@ -39,26 +38,24 @@ class AvatarImage extends StatelessWidget {
             child: SvgPicture.string(
                 multiavatar(name, trBackground: trBackground)),
           )
-        : Container(
+        : SizedBox(
             width: width,
             height: height,
-            decoration: BoxDecoration(
-              border: Border.all(
-                  color: borderColor ?? Theme.of(context).cardColor,
-                  width: borderWidth),
-              color: bgColor,
-              borderRadius: BorderRadius.circular(radius),
-              boxShadow: [
-                BoxShadow(
-                  color: shadowColor.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 1,
-                  offset: Offset(1, 1), // changes position of shadow
-                ),
-              ],
-              image:
-                  DecorationImage(image: NetworkImage(name), fit: BoxFit.cover),
-            ),
-          );
+            child: Image.network(
+              name,
+              fit: BoxFit.cover,
+              loadingBuilder: (BuildContext context, Widget child,
+                  ImageChunkEvent? loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
+            ));
   }
 }

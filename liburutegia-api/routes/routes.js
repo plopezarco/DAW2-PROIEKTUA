@@ -29,6 +29,35 @@ const router = app => {
         });
     });
 
+    app.get('/liburuak/idazlea/:id', (request, response) => {
+        const id = request.params.id;
+
+        pool.query('SELECT * FROM liburua WHERE idIdazlea = ?', id, (error, result) => {
+            if (error) {
+                sendError(error,response)
+            }
+
+            response.send(result);
+        });
+    });
+
+    app.post('/login', (request, response) => {
+        var email = request.body["email"];
+        var pass = request.body["password"];
+
+        pool.query('SELECT * FROM erabiltzailea WHERE email = ? and pasahitza = ?', [email, pass],  (error, result) => {
+            if (error) {
+                sendError(error,response)
+            }
+
+            if (result  && result.length > 0){
+                response.send(true);
+                return;
+            }
+            response.send(false);
+        });
+    });
+
     app.post('/liburuak', (request, response) => {
         pool.query('INSERT INTO liburua SET ?', request.body, (error, result) => {
             if (error) {

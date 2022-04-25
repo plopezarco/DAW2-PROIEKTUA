@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:liburutegiaapp/data/json.dart';
 import 'package:liburutegiaapp/models/liburua.dart';
 import 'package:liburutegiaapp/services/api_service.dart';
@@ -7,6 +6,7 @@ import 'package:liburutegiaapp/widgets/avatar_image.dart';
 import 'package:liburutegiaapp/widgets/book_card.dart';
 import 'package:liburutegiaapp/widgets/book_cover.dart';
 import 'package:flutter/material.dart';
+import 'package:liburutegiaapp/helpers/globals.dart' as globals;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    futureLiburuak = api.getBooks();
+    futureLiburuak = api.getLiburuak();
   }
 
   @override
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: primary,
+        backgroundColor: themeMain,
         // backgroundColor: Colors.transparent,
         elevation: 0,
         title: Row(
@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
           height: 250,
           decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(bottomLeft: Radius.circular(100)),
-              color: primary),
+              color: themeMain),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -72,9 +72,9 @@ class _HomePageState extends State<HomePage> {
               ),
               Container(
                 margin: const EdgeInsets.only(left: 35, right: 15),
-                child: const Text(
-                  "Hi, Sangvaleap",
-                  style: TextStyle(
+                child: Text(
+                  "Kaixo, " + globals.username,
+                  style: const TextStyle(
                       color: secondary,
                       fontSize: 23,
                       fontWeight: FontWeight.w600),
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
               Container(
                 margin: const EdgeInsets.only(left: 35, right: 15),
                 child: const Text(
-                  "Welcome to Lifemasto!",
+                  "Ongi Etorri Liburutegira!",
                   style: TextStyle(
                       color: secondary,
                       fontSize: 15,
@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
         ),
         Container(
           height: 150,
-          color: primary,
+          color: themeMain,
           child: Container(
             decoration: const BoxDecoration(
                 color: appBgColor,
