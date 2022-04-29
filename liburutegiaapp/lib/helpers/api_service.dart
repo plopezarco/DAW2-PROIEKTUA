@@ -1,13 +1,13 @@
 import 'dart:convert';
-
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_login/flutter_login.dart';
 import 'package:http/http.dart' as http;
 import 'package:liburutegiaapp/models/idazlea.dart';
 import 'package:liburutegiaapp/models/liburua.dart';
 
 class ApiService {
-  //static String baseUrl = "http://localhost:8081";
-  static String baseUrl = "http://10.0.2.2:8081";
+  static String baseUrl =
+      kIsWeb ? "http://localhost:8081" : "http://10.0.2.2:8081";
 
   Future<List<Liburua>> getLiburuak() async {
     Uri url = Uri.parse(baseUrl + "/liburuak");
@@ -88,11 +88,11 @@ class ApiService {
       if (response.statusCode == 200) {
         return response.body == "true";
       } else {
-        throw Exception('Failed to load books');
+        throw Exception('Failed to login');
       }
     } catch (e) {
       print(e);
-      throw Exception('Failed to load books');
+      throw Exception('Failed to login');
     }
   }
 }

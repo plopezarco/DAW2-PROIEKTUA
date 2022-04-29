@@ -3,7 +3,6 @@ import 'package:liburutegiaapp/models/idazlea.dart';
 import 'package:liburutegiaapp/pages/writer_details.dart';
 import 'package:flutter/material.dart';
 import 'package:liburutegiaapp/widgets/net_img.dart';
-import 'avatar_image.dart';
 
 class WriterItem extends StatelessWidget {
   const WriterItem({Key? key, required this.idazlea}) : super(key: key);

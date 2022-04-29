@@ -1,6 +1,5 @@
-import 'package:liburutegiaapp/pages/intro_page.dart';
-import 'package:liburutegiaapp/pages/login_page.dart';
-import 'package:liburutegiaapp/theme/colors.dart';
+import 'package:liburutegiaapp/pages/pages.dart';
+import 'package:liburutegiaapp/helpers/colors.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,6 +15,17 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Liburutegia',
       theme: ThemeData(brightness: Brightness.light, primaryColor: themeMain),
+      /*builder: (context, widget) => ResponsiveWrapper.builder(
+        const LoginPage(),
+        maxWidth: 1200,
+        minWidth: 480,
+        defaultScale: true,
+        breakpoints: const [
+          ResponsiveBreakpoint.resize(480, name: MOBILE),
+          ResponsiveBreakpoint.autoScale(800, name: TABLET),
+          ResponsiveBreakpoint.resize(1000, name: DESKTOP),
+        ],
+      ),*/
       home: const LoginPage(),
     );
   }

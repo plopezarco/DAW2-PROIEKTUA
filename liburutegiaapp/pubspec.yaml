@@ -43,6 +43,9 @@ dependencies:
   flutter_login: ^3.2.0
   multi_select_flutter: ^4.1.2
   easy_image_viewer: ^1.0.4
+  responsive_framework: ^0.1.7
+  animations: ^2.0.2
+  date_time_picker: ^2.1.0
 
 dev_dependencies:
   flutter_test:

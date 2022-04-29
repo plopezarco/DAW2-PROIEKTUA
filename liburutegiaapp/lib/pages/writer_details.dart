@@ -1,8 +1,7 @@
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:liburutegiaapp/models/idazlea.dart';
-import 'package:liburutegiaapp/theme/colors.dart';
-import 'package:liburutegiaapp/widgets/avatar_image.dart';
+import 'package:liburutegiaapp/helpers/colors.dart';
 import 'package:liburutegiaapp/widgets/net_img.dart';
 
 class WriterDetails extends StatelessWidget {

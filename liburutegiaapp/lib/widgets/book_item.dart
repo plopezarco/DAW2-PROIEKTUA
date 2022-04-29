@@ -82,12 +82,21 @@ class BookItem extends StatelessWidget {
             ),
             IconButton(
                 onPressed: () {
-                  if (!globals.cart.contains(liburua)) {
+                  if (!globals.cart.contains(liburua) &&
+                      globals.cart.length < 4) {
                     globals.cart.add(liburua);
-                    notifyParent();
+                  } else if (globals.cart.length >= 4) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text(
+                            "Ezin dira 4 liburu baino gehiago aukeratu aldi berean.")));
+                  } else {
+                    globals.cart.remove(liburua);
                   }
+                  notifyParent();
                 },
-                icon: const Icon(Icons.add))
+                icon: !globals.cart.contains(liburua)
+                    ? const Icon(Icons.add)
+                    : const Icon(Icons.close))
           ],
           mainAxisAlignment: MainAxisAlignment.spaceAround,
         ));

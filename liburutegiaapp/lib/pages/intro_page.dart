@@ -87,9 +87,7 @@ class IntroPageState extends State<IntroPage> {
     );
   }
 
-  void onNextPress() {
-    print("onNextPress caught");
-  }
+  void onNextPress() {}
 
   Widget renderNextBtn() {
     return const Icon(

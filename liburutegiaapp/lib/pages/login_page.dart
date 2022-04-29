@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
-import 'package:liburutegiaapp/pages/home.dart';
-import 'package:liburutegiaapp/services/api_service.dart';
+import 'package:liburutegiaapp/helpers/api_service.dart';
+import 'package:liburutegiaapp/pages/pages.dart';
 import 'package:liburutegiaapp/helpers/globals.dart' as globals;
 
 class LoginPage extends StatefulWidget {

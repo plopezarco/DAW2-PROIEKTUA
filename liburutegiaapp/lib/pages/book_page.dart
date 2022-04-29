@@ -3,9 +3,11 @@ import 'package:liburutegiaapp/helpers/book_search.dart';
 import 'package:liburutegiaapp/helpers/writer_search.dart';
 import 'package:liburutegiaapp/models/idazlea.dart';
 import 'package:liburutegiaapp/models/liburua.dart';
-import 'package:liburutegiaapp/services/api_service.dart';
-import 'package:liburutegiaapp/theme/colors.dart';
+import 'package:liburutegiaapp/helpers/api_service.dart';
+import 'package:liburutegiaapp/helpers/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:liburutegiaapp/pages/order_page.dart';
+import 'package:liburutegiaapp/widgets/net_img.dart';
 import 'package:liburutegiaapp/widgets/writer_item.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:liburutegiaapp/widgets/book_item.dart';
@@ -29,6 +31,8 @@ class _BookPageState extends State<BookPage> {
   List<Liburua> liburuFilter = <Liburua>[];
   List<String> generoFilter = <String>[];
 
+  List<Liburua> saskia = <Liburua>[];
+
   int tabIndex = 0;
 
   @override
@@ -36,6 +40,8 @@ class _BookPageState extends State<BookPage> {
     super.initState();
     ftrLiburu = api.getLiburuakIdazlearekin();
     ftrIdazle = api.getIdazleakLiburuekin();
+
+    saskia = globals.cart;
   }
 
   @override
@@ -81,16 +87,20 @@ class _BookPageState extends State<BookPage> {
                 width: 15,
               ),
               Badge(
-                position: BadgePosition.topEnd(top: -10, end: -10),
-                badgeContent: Text(
-                  globals.cart.length.toString(),
-                  style: const TextStyle(color: Colors.white),
-                ),
-                child: const Icon(
-                  Icons.shopping_bag_rounded,
-                  color: primary,
-                ),
-              ),
+                  position: BadgePosition.topEnd(top: 0, end: 0),
+                  badgeContent: Text(
+                    saskia.length.toString(),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.shopping_bag_rounded,
+                      color: primary,
+                    ),
+                    onPressed: () {
+                      saskiaIkusi();
+                    },
+                  )),
             ],
           ),
         ),
@@ -249,5 +259,131 @@ class _BookPageState extends State<BookPage> {
 
   refresh() {
     setState(() {});
+  }
+
+  saskiaIkusi() {
+    showDialog(
+        context: context,
+        builder: (_) => StatefulBuilder(builder: (context, setState) {
+              return AlertDialog(
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                content: Builder(
+                  builder: (context) {
+                    var height = MediaQuery.of(context).size.height;
+                    var width = MediaQuery.of(context).size.width;
+
+                    return SizedBox(
+                      height: height - 190,
+                      width: width - 100,
+                      child: Builder(builder: (context) {
+                        return StatefulBuilder(builder: (context, setState) {
+                          return Column(
+                            children: [
+                              Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Text(
+                                    "Saskia: " +
+                                        saskia.length.toString() +
+                                        " liburu",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                        fontSize: 22.0),
+                                  )),
+                              Expanded(
+                                  child: GridView.builder(
+                                      itemBuilder: ((context, index) {
+                                        Liburua l = saskia[index];
+                                        return Center(
+                                          child: Stack(children: [
+                                            NetImage(imgurl: l.irudia),
+                                            Positioned(
+                                                bottom: 5,
+                                                right: 5,
+                                                child: SizedBox(
+                                                  child: ElevatedButton(
+                                                    style: ButtonStyle(
+                                                        padding:
+                                                            MaterialStateProperty
+                                                                .all<
+                                                                        EdgeInsets>(
+                                                                    EdgeInsets
+                                                                        .zero),
+                                                        backgroundColor:
+                                                            MaterialStateProperty
+                                                                .all<Color>(
+                                                                    Colors
+                                                                        .red)),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        saskia.remove(l);
+                                                      });
+                                                      refresh();
+                                                    },
+                                                    child: const Align(
+                                                        child: Icon(Icons
+                                                            .delete_forever)),
+                                                  ),
+                                                  width: 30,
+                                                ))
+                                          ]),
+                                        );
+                                      }),
+                                      itemCount: saskia.length,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                                              maxCrossAxisExtent: 250,
+                                              childAspectRatio: 0.7,
+                                              crossAxisSpacing: 5,
+                                              mainAxisSpacing: 5)),
+                                  flex: 6),
+                              Row(
+                                children: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("Itxi")),
+                                  TextButton(
+                                      onPressed: saskia.isEmpty
+                                          ? null
+                                          : () {
+                                              saskiaHustu();
+                                            },
+                                      child: const Text("Hustu")),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const OrderPage()));
+                                      },
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                                  themeMain)),
+                                      child: const Text("Eskatu")),
+                                ],
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                              ),
+                            ],
+                          );
+                        });
+                      }),
+                    );
+                  },
+                ),
+              );
+            }));
+  }
+
+  saskiaHustu() {
+    setState(() {
+      saskia.clear();
+      Navigator.pop(context);
+    });
   }
 }

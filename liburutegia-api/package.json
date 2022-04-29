@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.5.1",
+    "cors": "^2.8.5",
     "express": "^4.17.3",
     "express-json-error-handler": "^4.1.0",
     "mysql": "^2.18.1"

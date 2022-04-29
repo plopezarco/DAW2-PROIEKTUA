@@ -1,7 +1,7 @@
 import 'package:liburutegiaapp/data/json.dart';
 import 'package:liburutegiaapp/models/liburua.dart';
-import 'package:liburutegiaapp/services/api_service.dart';
-import 'package:liburutegiaapp/theme/colors.dart';
+import 'package:liburutegiaapp/helpers/api_service.dart';
+import 'package:liburutegiaapp/helpers/colors.dart';
 import 'package:liburutegiaapp/widgets/avatar_image.dart';
 import 'package:liburutegiaapp/widgets/book_card.dart';
 import 'package:liburutegiaapp/widgets/book_cover.dart';
