@@ -50,7 +50,9 @@ class BookDetails extends StatelessWidget {
                               onTap: () {
                                 showImageViewer(context,
                                     Image.network(liburua.irudia).image,
-                                    closeButtonTooltip: "Itxi");
+                                    closeButtonTooltip: "Itxi",
+                                    immersive: false,
+                                    useSafeArea: true);
                               },
                             )),
                         flex: 6),

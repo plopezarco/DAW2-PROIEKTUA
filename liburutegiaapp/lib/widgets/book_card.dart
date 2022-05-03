@@ -2,12 +2,13 @@ import 'dart:math';
 
 import 'package:liburutegiaapp/helpers/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:liburutegiaapp/models/liburua.dart';
 
 import 'avatar_image.dart';
 
 class BookCard extends StatelessWidget {
   const BookCard({Key? key, required this.book}) : super(key: key);
-  final dynamic book;
+  final Liburua book;
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +44,8 @@ class BookCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(7),
               ),
               child: AvatarImage(
-                book["image"],
-                width: 80,
+                book.irudia,
+                width: 70,
                 height: 100,
                 isSVG: false,
               ),
@@ -53,7 +54,7 @@ class BookCard extends StatelessWidget {
           const SizedBox(
             height: 15,
           ),
-          Text(book["title"],
+          Text(book.izenburua,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
@@ -66,18 +67,10 @@ class BookCard extends StatelessWidget {
               textAlign: TextAlign.center,
               text: TextSpan(children: [
                 TextSpan(
-                    text: book["price"],
+                    text: book.idazlea!.izena,
                     style: const TextStyle(
                         fontSize: 16,
-                        color: primary,
-                        fontWeight: FontWeight.w500)),
-                const TextSpan(text: "   "),
-                TextSpan(
-                    text: book["ori_price"],
-                    style: const TextStyle(
                         color: Colors.grey,
-                        fontSize: 16,
-                        decoration: TextDecoration.lineThrough,
                         fontWeight: FontWeight.w500)),
               ]))
         ],

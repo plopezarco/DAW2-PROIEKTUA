@@ -33,7 +33,9 @@ class BookItem extends StatelessWidget {
                     onTap: () {
                       showImageViewer(
                           context, Image.network(liburua.irudia).image,
-                          closeButtonTooltip: "Itxi");
+                          closeButtonTooltip: "Itxi",
+                          immersive: false,
+                          useSafeArea: true);
                     },
                   ))
             ]),
@@ -59,9 +61,9 @@ class BookItem extends StatelessWidget {
                         text: TextSpan(children: [
                       TextSpan(
                           text: liburua.generoa,
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 14,
-                              color: Colors.black,
+                              color: Colors.grey[700],
                               fontWeight: FontWeight.w500)),
                     ])))
               ],

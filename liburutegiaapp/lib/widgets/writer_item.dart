@@ -28,7 +28,9 @@ class WriterItem extends StatelessWidget {
                     onTap: () {
                       showImageViewer(
                           context, Image.network(idazlea.irudia).image,
-                          closeButtonTooltip: "Itxi");
+                          closeButtonTooltip: "Itxi",
+                          immersive: false,
+                          useSafeArea: true);
                     },
                   ))
             ]),

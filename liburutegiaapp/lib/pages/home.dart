@@ -1,5 +1,6 @@
 import 'package:liburutegiaapp/pages/pages.dart';
 import 'package:liburutegiaapp/helpers/colors.dart';
+import 'package:liburutegiaapp/pages/eskaerak_page.dart';
 import 'package:liburutegiaapp/widgets/bottombar_item.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,7 @@ class _HomeState extends State<Home> {
 
   Widget getBottomBar() {
     return Container(
-      height: 65,
+      height: 60,
       width: double.infinity,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -58,7 +59,7 @@ class _HomeState extends State<Home> {
                   activeTab = 2;
                 });
               },
-              child: BottomBarItem(Icons.settings, "",
+              child: BottomBarItem(Icons.book, "",
                   isActive: activeTab == 2, activeColor: secondary),
             )
           ])),
@@ -74,16 +75,7 @@ class _HomeState extends State<Home> {
             borderRadius: BorderRadius.only(bottomRight: Radius.circular(80))),
         child: IndexedStack(
           index: activeTab,
-          children: const <Widget>[
-            HomePage(),
-            BookPage(),
-            Center(
-              child: Text(
-                "Setting",
-                style: TextStyle(fontSize: 35),
-              ),
-            )
-          ],
+          children: const <Widget>[HomePage(), BookPage(), EskaerakPage()],
         ),
       ),
     );

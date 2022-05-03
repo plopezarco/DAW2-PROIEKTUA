@@ -161,7 +161,7 @@ class _BookPageState extends State<BookPage> {
                         return Text('${snapshot.error}',
                             style: const TextStyle(color: Colors.black));
                       }
-                      return const CircularProgressIndicator();
+                      return const Center(child: CircularProgressIndicator());
                     },
                   ),
                   FutureBuilder<List<Idazlea>>(
@@ -174,7 +174,7 @@ class _BookPageState extends State<BookPage> {
                         return Text('${snapshot.error}',
                             style: const TextStyle(color: Colors.black));
                       }
-                      return const CircularProgressIndicator();
+                      return const Center(child: CircularProgressIndicator());
                     },
                   )
                 ],
@@ -188,10 +188,7 @@ class _BookPageState extends State<BookPage> {
 
   getLiburuakList() {
     return RefreshIndicator(
-        onRefresh: () async {
-          ftrLiburu = api.getLiburuakIdazlearekin();
-          setState(() {});
-        },
+        onRefresh: () => liburuakRefresh(),
         child: ListView.builder(
           scrollDirection: Axis.vertical,
           padding: const EdgeInsets.only(left: 15, right: 15),
@@ -236,8 +233,8 @@ class _BookPageState extends State<BookPage> {
       builder: (ctx) {
         return MultiSelectBottomSheet(
           minChildSize: 0.1,
-          initialChildSize: 0.1 + generoFilter.length * 0.1,
-          maxChildSize: 0.1 + generoFilter.length * 0.1,
+          initialChildSize: 0.1 + generoFilter.length * 0.09,
+          maxChildSize: 0.1 + generoFilter.length * 0.09,
           cancelText: Text(
             "ATZERA",
             style: TextStyle(
@@ -353,13 +350,15 @@ class _BookPageState extends State<BookPage> {
                                             },
                                       child: const Text("Hustu")),
                                   ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const OrderPage()));
-                                      },
+                                      onPressed: saskia.isEmpty
+                                          ? null
+                                          : () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const OrderPage()));
+                                            },
                                       style: ButtonStyle(
                                           backgroundColor:
                                               MaterialStateProperty.all<Color>(
@@ -384,6 +383,15 @@ class _BookPageState extends State<BookPage> {
     setState(() {
       saskia.clear();
       Navigator.pop(context);
+    });
+  }
+
+  liburuakRefresh() async {
+    ftrLiburu = api.getLiburuakIdazlearekin();
+    List<Liburua> l = await ftrLiburu!;
+    setState(() {
+      liburuak = l;
+      liburuFilter = l;
     });
   }
 }

@@ -1,4 +1,3 @@
-import 'package:liburutegiaapp/data/json.dart';
 import 'package:liburutegiaapp/models/liburua.dart';
 import 'package:liburutegiaapp/helpers/api_service.dart';
 import 'package:liburutegiaapp/helpers/colors.dart';
@@ -17,12 +16,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   ApiService api = ApiService();
-  late Future<List<Liburua>> futureLiburuak;
+  Future<List<Liburua>>? ftrLiburu;
+  List<Liburua> popularBooks = <Liburua>[];
+  List<Liburua> newBooks = <Liburua>[];
 
   @override
   void initState() {
     super.initState();
-    futureLiburuak = api.getLiburuak();
+    ftrLiburu = api.getLiburuakIdazlearekin();
   }
 
   @override
@@ -31,7 +32,6 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: themeMain,
-        // backgroundColor: Colors.transparent,
         elevation: 0,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -47,7 +47,11 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               width: 15,
             ),
-            AvatarImage(profile, isSVG: false, width: 27, height: 27)
+            const AvatarImage(
+                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
+                isSVG: false,
+                width: 27,
+                height: 27)
           ],
         ),
       ),
@@ -99,7 +103,7 @@ class _HomePageState extends State<HomePage> {
               Container(
                   padding: const EdgeInsets.only(left: 15, right: 15),
                   child: const Text(
-                    "Popular Books",
+                    "Liburu ezagunak:",
                     style: TextStyle(
                         color: secondary,
                         fontSize: 18,
@@ -141,7 +145,21 @@ class _HomePageState extends State<HomePage> {
                   right: 0,
                   child: SizedBox(
                     height: 260,
-                    child: getPopularBooks(),
+                    child: FutureBuilder<List<Liburua>>(
+                      future: ftrLiburu,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData && snapshot.data != null) {
+                          popularBooks = snapshot.data!;
+                          popularBooks.shuffle();
+                          popularBooks = popularBooks.take(5).toList();
+                          return getPopularBooks();
+                        } else if (snapshot.hasError) {
+                          return Text('${snapshot.error}',
+                              style: const TextStyle(color: Colors.black));
+                        }
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                    ),
                   )),
             ],
           ),
@@ -154,7 +172,7 @@ class _HomePageState extends State<HomePage> {
               Container(
                   padding: const EdgeInsets.only(left: 15, right: 15, top: 10),
                   child: const Text(
-                    "Latest Books",
+                    "Liburu berrienak: ",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   )),
               const SizedBox(
@@ -162,7 +180,21 @@ class _HomePageState extends State<HomePage> {
               ),
               Container(
                 margin: const EdgeInsets.only(left: 15),
-                child: getLatestBooks(),
+                child: FutureBuilder<List<Liburua>>(
+                  future: ftrLiburu,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data != null) {
+                      newBooks = snapshot.data!;
+                      newBooks.sort(((a, b) => a.urtea.compareTo(b.urtea)));
+                      newBooks = newBooks.take(6).toList();
+                      return getLatestBooks();
+                    } else if (snapshot.hasError) {
+                      return Text('${snapshot.error}',
+                          style: const TextStyle(color: Colors.black));
+                    }
+                    return const Center(child: CircularProgressIndicator());
+                  },
+                ),
               ),
               const SizedBox(
                 height: 25,
@@ -191,7 +223,7 @@ class _HomePageState extends State<HomePage> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: List.generate(
-            latestBooks.length, (index) => BookCover(book: latestBooks[index])),
+            newBooks.length, (index) => BookCover(book: newBooks[index])),
       ),
     );
   }

@@ -9,21 +9,11 @@ class Liburua {
   String generoa;
   int urtea;
   String irudia;
-  int stock;
   int idIdazlea;
   Idazlea? idazlea;
 
-  Liburua(
-      this.idLiburua,
-      this.isbn,
-      this.izenburua,
-      this.sinopsia,
-      this.orriKopurua,
-      this.generoa,
-      this.urtea,
-      this.irudia,
-      this.stock,
-      this.idIdazlea);
+  Liburua(this.idLiburua, this.isbn, this.izenburua, this.sinopsia,
+      this.orriKopurua, this.generoa, this.urtea, this.irudia, this.idIdazlea);
 
   factory Liburua.fromJson(Map<String, dynamic> json) {
     return Liburua(
@@ -35,7 +25,6 @@ class Liburua {
         json["Generoa"] ?? "",
         json["Urtea"] ?? 0,
         json["Irudia"] ?? "",
-        json["Stock"] ?? 0,
         json["idIdazlea"] ?? 0);
   }
 }

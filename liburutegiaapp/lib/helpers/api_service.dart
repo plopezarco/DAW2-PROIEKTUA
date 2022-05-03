@@ -2,8 +2,11 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_login/flutter_login.dart';
 import 'package:http/http.dart' as http;
+import 'package:liburutegiaapp/models/eskaera.dart';
+import 'package:liburutegiaapp/models/eskaera_lerroa.dart';
 import 'package:liburutegiaapp/models/idazlea.dart';
 import 'package:liburutegiaapp/models/liburua.dart';
+import 'package:liburutegiaapp/helpers/globals.dart' as globals;
 
 class ApiService {
   static String baseUrl =
@@ -41,6 +44,7 @@ class ApiService {
     for (Liburua l in book) {
       l.idazlea = await getIdazleaById(l.idIdazlea.toString());
     }
+    book.sort((a, b) => a.izenburua.compareTo(b.izenburua));
     return book;
   }
 
@@ -62,6 +66,7 @@ class ApiService {
     for (Idazlea i in idazleak) {
       i.liburuak = await getLiburuakByIdazlea(i.idIdazlea.toString());
     }
+    idazleak.sort((a, b) => a.izena.compareTo(b.izena));
     return idazleak;
   }
 
@@ -91,8 +96,93 @@ class ApiService {
         throw Exception('Failed to login');
       }
     } catch (e) {
-      print(e);
       throw Exception('Failed to login');
+    }
+  }
+
+  Future<int> getErabiltzaileId(String erab) async {
+    Uri url = Uri.parse(baseUrl + "/login/" + erab);
+    final response =
+        await http.get(url, headers: {"Access-Control-Allow-Origin": "*"});
+
+    if (response.statusCode == 200) {
+      var map = json.decode(response.body);
+      return map[0]["idErabiltzailea"];
+    } else {
+      throw Exception('Failed to load books');
+    }
+  }
+
+  Future<bool> eskatu(Eskaera e) async {
+    Uri url = Uri.parse(baseUrl + "/eskaerak");
+
+    e.idErabiltzailea = await getErabiltzaileId(globals.username);
+    final response = await http.post(url, body: jsonEncode(e), headers: {
+      "Access-Control-Allow-Origin": "*",
+      "content-type": "application/json"
+    });
+    if (response.statusCode == 201) {
+      return response.body == "true";
+    } else {
+      throw Exception('Failed to login');
+    }
+  }
+
+  Future<List<Eskaera>> getEskaerakByErabiltzailea(String erab) async {
+    int id = await getErabiltzaileId(erab);
+    Uri url = Uri.parse(baseUrl + "/eskaerak/" + id.toString());
+    final response =
+        await http.get(url, headers: {"Access-Control-Allow-Origin": "*"});
+
+    if (response.statusCode == 200) {
+      List<Eskaera> eskaerak = (json.decode(response.body) as List)
+          .map((i) => Eskaera.fromJson(i))
+          .toList();
+
+      for (Eskaera e in eskaerak) {
+        e.eskaeraData = e.eskaeraData.add(const Duration(days: 1));
+        e.itzultzeData = e.itzultzeData.add(const Duration(days: 1));
+        e.lerroak = <EskaeraLerroa>[];
+        e.lerroak = await getLerroakByEskaera(e.idEskaera!);
+      }
+      eskaerak.sort(((a, b) => b.eskaeraData.compareTo(a.eskaeraData)));
+      return eskaerak;
+    } else {
+      throw Exception('Failed to load eskaerak');
+    }
+  }
+
+  Future<List<EskaeraLerroa>> getLerroakByEskaera(int idEskaera) async {
+    Uri url =
+        Uri.parse(baseUrl + "/eskaerak/" + idEskaera.toString() + "/lerroak");
+    final response =
+        await http.get(url, headers: {"Access-Control-Allow-Origin": "*"});
+    if (response.statusCode == 200) {
+      List<Liburua> liburuak = await getLiburuakIdazlearekin();
+      List<EskaeraLerroa> lerroak = (json.decode(response.body) as List)
+          .map((i) => EskaeraLerroa.fromJson(i))
+          .toList();
+
+      for (var l in lerroak) {
+        l.liburua =
+            liburuak.firstWhere((element) => element.idLiburua == l.idLiburua);
+      }
+      return lerroak;
+    } else {
+      throw Exception('Failed to load eskaerak');
+    }
+  }
+
+  Future<bool> itzuli(EskaeraLerroa l) async {
+    Uri url =
+        Uri.parse(baseUrl + "/eskaerak/" + l.idEskaera.toString() + "/lerroak");
+    final response = await http.post(url,
+        body: {"idLerroa": l.idEskaeraLerroa.toString()},
+        headers: {"Access-Control-Allow-Origin": "*"});
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to update');
     }
   }
 }

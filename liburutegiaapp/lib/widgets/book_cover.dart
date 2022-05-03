@@ -1,13 +1,12 @@
 import 'dart:math';
-
 import 'package:liburutegiaapp/helpers/colors.dart';
 import 'package:flutter/material.dart';
-
+import 'package:liburutegiaapp/models/liburua.dart';
 import 'avatar_image.dart';
 
 class BookCover extends StatelessWidget {
   const BookCover({Key? key, required this.book}) : super(key: key);
-  final dynamic book;
+  final Liburua book;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,7 @@ class BookCover extends StatelessWidget {
                   width: _width,
                   height: _height,
                   decoration: BoxDecoration(
-                    color: themeMain,
+                    color: primary,
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
                       BoxShadow(
@@ -48,19 +47,12 @@ class BookCover extends StatelessWidget {
                 height: _height,
                 padding: const EdgeInsets.all(8),
                 child: AvatarImage(
-                  book["image"],
+                  book.irudia,
                   isSVG: false,
                   radius: 8,
                 ),
               )
             ]),
-            const SizedBox(
-              height: 8,
-            ),
-            Text(
-              book["price"],
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            )
           ],
         ));
   }
