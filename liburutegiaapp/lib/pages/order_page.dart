@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:liburutegiaapp/helpers/api_service.dart';
 import 'package:liburutegiaapp/helpers/colors.dart';
 import 'package:intl/intl.dart';
@@ -6,6 +7,7 @@ import 'package:liburutegiaapp/models/eskaera.dart';
 import 'package:liburutegiaapp/helpers/globals.dart' as globals;
 import 'package:liburutegiaapp/models/liburua.dart';
 import 'package:liburutegiaapp/pages/pages.dart';
+import 'package:location/location.dart';
 
 class OrderPage extends StatefulWidget {
   const OrderPage({Key? key}) : super(key: key);
@@ -21,11 +23,12 @@ class _OrderPageState extends State<OrderPage> {
   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
   ApiService api = ApiService();
   bool apiCall = false;
+  TextEditingController txt = TextEditingController();
+  bool findingLocation = false;
 
   @override
   Widget build(BuildContext context) {
     itzuli = DateTime.now().add(const Duration(days: 15));
-
     return Scaffold(
         appBar:
             AppBar(title: const Text('Eskaera'), backgroundColor: themeMain),
@@ -68,16 +71,33 @@ class _OrderPageState extends State<OrderPage> {
                                     abizena = val;
                                   })),
                           TextFormField(
+                              controller: txt,
                               enabled: !apiCall,
                               decoration: InputDecoration(
                                 labelText: 'Helbidea',
                                 suffixIcon: ClipOval(
                                     child: Material(
                                   color: Colors.transparent,
-                                  child: IconButton(
-                                    onPressed: !apiCall ? () {} : null,
-                                    icon: const Icon(Icons.location_on),
-                                  ),
+                                  child: findingLocation
+                                      ? const CircularProgressIndicator()
+                                      : IconButton(
+                                          onPressed: !apiCall
+                                              ? () {
+                                                  setState(() {
+                                                    findingLocation = true;
+                                                  });
+                                                  getAddress().then(
+                                                      (value) => setState(() {
+                                                            if (value != null) {
+                                                              txt.text = value;
+                                                            }
+                                                            findingLocation =
+                                                                false;
+                                                          }));
+                                                }
+                                              : null,
+                                          icon: const Icon(Icons.location_on),
+                                        ),
                                 )),
                               ),
                               validator: (value) {
@@ -211,5 +231,46 @@ class _OrderPageState extends State<OrderPage> {
     setState(() {
       apiCall = false;
     });
+  }
+
+  Future<String?> getAddress() async {
+    Location location = Location();
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return null;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return null;
+      }
+    }
+
+    _locationData = await location.getLocation();
+
+    if (_locationData.latitude != null && _locationData.longitude != null) {
+      List<geocoding.Placemark> placemarks =
+          await geocoding.placemarkFromCoordinates(
+              _locationData.latitude!, _locationData.longitude!);
+      geocoding.Placemark place1 = placemarks.first;
+      return place1.street! +
+          " " +
+          place1.name! +
+          ", " +
+          place1.postalCode! +
+          " " +
+          place1.locality!;
+    }
+
+    return null;
   }
 }

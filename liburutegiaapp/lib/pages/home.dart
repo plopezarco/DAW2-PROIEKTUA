@@ -59,7 +59,7 @@ class _HomeState extends State<Home> {
                   activeTab = 2;
                 });
               },
-              child: BottomBarItem(Icons.book, "",
+              child: BottomBarItem(Icons.bookmarks, "",
                   isActive: activeTab == 2, activeColor: secondary),
             )
           ])),

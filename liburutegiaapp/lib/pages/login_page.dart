@@ -17,8 +17,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
-      title: 'Liburutegia',
-      //logo: AssetImage('assets/images/ecorp-lightblue.png'),
+      title: 'LiburutegiApp',
+      logo: const AssetImage('assets/logo.png'),
       onLogin: _authUser,
       onSignup: _signupUser,
       onSubmitAnimationCompleted: () {
@@ -27,8 +27,11 @@ class _LoginPageState extends State<LoginPage> {
         ));
       },
       messages: LoginMessages(
+          flushbarTitleError: "Errorea",
           userHint: "Erabiltzailea",
           passwordHint: "Pasahitza",
+          loginButton: "SARTU",
+          signupButton: "ERREGISTRATU",
           confirmPasswordHint: "Pasahitza errepikatu",
           confirmPasswordError: "Pasahitzak ez dira berdinak",
           confirmSignupButton: "Erregistratu"),
@@ -49,10 +52,15 @@ class _LoginPageState extends State<LoginPage> {
     return "Erabiltzailea edo pasahitza okerrak dira.";
   }
 
-  Future<String?> _signupUser(SignupData data) {
-    return Future.delayed(loginTime).then((_) {
+  Future<String?> _signupUser(SignupData data) async {
+    int code = await api.signup(data);
+    if (code == 201) {
+      globals.isLoggedIn = true;
+      globals.username = data.name!;
       return null;
-    });
+    } else {
+      return "Erabiltzaile hori dagoeneko erregistratuta dago";
+    }
   }
 
   Future<String?> _recoverPassword(String name) {

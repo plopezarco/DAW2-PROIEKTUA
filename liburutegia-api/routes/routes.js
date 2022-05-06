@@ -91,6 +91,24 @@ const router = app => {
         });
     });
 
+    app.post('/signup', (request, response) => {
+        var email = request.body["email"];
+        var pass = request.body["password"];
+
+        pool.query('insert into erabiltzailea (email, pasahitza) values (?,?)', [email,pass], (error,result) => {
+            if (error) {
+                if(error.errno === 1062){
+                    response.status(409).send();
+                    return;
+                }
+                sendError(error,response)
+                return;
+            }
+
+            response.status(201).send(true);
+        });
+    });
+
     app.post('/login', (request, response) => {
         var email = request.body["email"];
         var pass = request.body["password"];
@@ -189,7 +207,7 @@ const router = app => {
 function sendError(error, response){
     for (var k in error) {
         console.log(`${k}: ${error[k]}`);
-        response.status(500).send(error.code);
+        //response.status(500).send(error.code);
     }
 }
 

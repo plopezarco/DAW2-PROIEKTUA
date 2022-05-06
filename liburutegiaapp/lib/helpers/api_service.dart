@@ -100,6 +100,19 @@ class ApiService {
     }
   }
 
+  Future<int> signup(SignupData s) async {
+    Uri url = Uri.parse(baseUrl + "/signup");
+
+    final response = await http.post(url,
+        body: {"email": s.name, "password": s.password},
+        headers: {"Access-Control-Allow-Origin": "*"});
+    if (response.statusCode == 201 || response.statusCode == 409) {
+      return response.statusCode;
+    } else {
+      throw Exception('Failed to signup');
+    }
+  }
+
   Future<int> getErabiltzaileId(String erab) async {
     Uri url = Uri.parse(baseUrl + "/login/" + erab);
     final response =

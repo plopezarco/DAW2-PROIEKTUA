@@ -1,6 +1,7 @@
 import 'package:liburutegiaapp/models/liburua.dart';
 import 'package:liburutegiaapp/helpers/api_service.dart';
 import 'package:liburutegiaapp/helpers/colors.dart';
+import 'package:liburutegiaapp/pages/login_page.dart';
 import 'package:liburutegiaapp/widgets/avatar_image.dart';
 import 'package:liburutegiaapp/widgets/book_card.dart';
 import 'package:liburutegiaapp/widgets/book_cover.dart';
@@ -40,12 +41,25 @@ class _HomePageState extends State<HomePage> {
             Expanded(
                 child: Container(
                     alignment: Alignment.centerLeft,
-                    child: const Icon(
-                      Icons.vertical_distribute_rounded,
+                    child: IconButton(
+                      icon: const Icon(Icons.logout),
+                      onPressed: () {
+                        globals.isLoggedIn = false;
+                        globals.username = "";
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ));
+                      },
                     ))),
-            const Icon(Icons.search_rounded),
             const SizedBox(
               width: 15,
+            ),
+            Text(
+              globals.username,
+              style: const TextStyle(fontSize: 14),
+            ),
+            const SizedBox(
+              width: 5,
             ),
             const AvatarImage(
                 "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
@@ -90,7 +104,7 @@ class _HomePageState extends State<HomePage> {
               Container(
                 margin: const EdgeInsets.only(left: 35, right: 15),
                 child: const Text(
-                  "Ongi Etorri Liburutegira!",
+                  "Ongi Etorri LiburutegiApp-ra!",
                   style: TextStyle(
                       color: secondary,
                       fontSize: 15,
@@ -179,13 +193,13 @@ class _HomePageState extends State<HomePage> {
                 height: 15,
               ),
               Container(
-                margin: const EdgeInsets.only(left: 15),
+                margin: const EdgeInsets.only(left: 15, right: 15),
                 child: FutureBuilder<List<Liburua>>(
                   future: ftrLiburu,
                   builder: (context, snapshot) {
                     if (snapshot.hasData && snapshot.data != null) {
                       newBooks = snapshot.data!;
-                      newBooks.sort(((a, b) => a.urtea.compareTo(b.urtea)));
+                      newBooks.sort(((a, b) => b.urtea.compareTo(a.urtea)));
                       newBooks = newBooks.take(6).toList();
                       return getLatestBooks();
                     } else if (snapshot.hasError) {
