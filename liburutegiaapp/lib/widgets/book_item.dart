@@ -46,7 +46,7 @@ class BookItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                    width: 130,
+                    width: 120,
                     child: Text(
                       liburua.izenburua,
                       textAlign: TextAlign.left,

@@ -29,7 +29,7 @@ class EskaeraItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       SizedBox(
-                          width: 200,
+                          width: 170,
                           child: Text(
                             eskaera.izena.trim() + " " + eskaera.abizena.trim(),
                             textAlign: TextAlign.left,
@@ -38,6 +38,9 @@ class EskaeraItem extends StatelessWidget {
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           )),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       SizedBox(
                           width: 100,
                           child: Text(
@@ -56,7 +59,7 @@ class EskaeraItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                          width: 200,
+                          width: 170,
                           child: Text(
                             "Helbidea: " + eskaera.helbidea,
                             style: TextStyle(
@@ -64,6 +67,9 @@ class EskaeraItem extends StatelessWidget {
                                 color: Colors.blue[600],
                                 fontWeight: FontWeight.w500),
                           )),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       SizedBox(
                           width: 100,
                           child: Text(

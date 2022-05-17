@@ -9,8 +9,9 @@ import 'package:liburutegiaapp/models/liburua.dart';
 import 'package:liburutegiaapp/helpers/globals.dart' as globals;
 
 class ApiService {
-  static String baseUrl =
-      kIsWeb ? "http://localhost:8081" : "http://10.0.2.2:8081";
+  /*static String baseUrl =
+      kIsWeb ? "http://localhost:8081" : "http://10.0.2.2:8081";*/
+  static String baseUrl = "https://meadow-rumbling-parakeet.glitch.me";
 
   Future<List<Liburua>> getLiburuak() async {
     Uri url = Uri.parse(baseUrl + "/liburuak");
@@ -152,11 +153,17 @@ class ApiService {
           .map((i) => Eskaera.fromJson(i))
           .toList();
 
+      List<Liburua> liburuak = await getLiburuakIdazlearekin();
+
       for (Eskaera e in eskaerak) {
         e.eskaeraData = e.eskaeraData.add(const Duration(days: 1));
         e.itzultzeData = e.itzultzeData.add(const Duration(days: 1));
         e.lerroak = <EskaeraLerroa>[];
         e.lerroak = await getLerroakByEskaera(e.idEskaera!);
+        for (var l in e.lerroak!) {
+          l.liburua = liburuak
+              .firstWhere((element) => element.idLiburua == l.idLiburua);
+        }
       }
       eskaerak.sort(((a, b) => b.eskaeraData.compareTo(a.eskaeraData)));
       return eskaerak;
@@ -171,15 +178,10 @@ class ApiService {
     final response =
         await http.get(url, headers: {"Access-Control-Allow-Origin": "*"});
     if (response.statusCode == 200) {
-      List<Liburua> liburuak = await getLiburuakIdazlearekin();
       List<EskaeraLerroa> lerroak = (json.decode(response.body) as List)
           .map((i) => EskaeraLerroa.fromJson(i))
           .toList();
 
-      for (var l in lerroak) {
-        l.liburua =
-            liburuak.firstWhere((element) => element.idLiburua == l.idLiburua);
-      }
       return lerroak;
     } else {
       throw Exception('Failed to load eskaerak');
